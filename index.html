@@ -1,1 +1,172 @@
-<html>hallo</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Download Links Manager</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .add-btn {
+      background: #28a745;
+      color: white;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    .delete-btn {
+      background: #dc3545;
+      color: white;
+      margin-left: 10px;
+    }
+
+    .download-list {
+      margin-top: 30px;
+    }
+
+    .download-item {
+      background: #fafafa;
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .download-item a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    .download-item a:hover {
+      text-decoration: underline;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Download Links Manager</h1>
+
+    <div class="form-group">
+      <label>File Name</label>
+      <input type="text" id="fileName" placeholder="Example: My Software">
+    </div>
+
+    <div class="form-group">
+      <label>Download Link</label>
+      <input type="url" id="fileLink" placeholder="https://example.com/file.zip">
+    </div>
+
+    <button class="add-btn" onclick="addLink()">Add Download Link</button>
+
+    <div class="download-list" id="downloadList"></div>
+  </div>
+
+  <script>
+    // Load saved links
+    let downloads = JSON.parse(localStorage.getItem("downloads")) || [];
+
+    function saveDownloads() {
+      localStorage.setItem("downloads", JSON.stringify(downloads));
+    }
+
+    function renderDownloads() {
+      const list = document.getElementById("downloadList");
+      list.innerHTML = "";
+
+      downloads.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "download-item";
+
+        div.innerHTML = `
+          <div>
+            <a href="${item.link}" target="_blank">${item.name}</a>
+          </div>
+
+          <div class="actions">
+            <button class="delete-btn" onclick="deleteLink(${index})">
+              Delete
+            </button>
+          </div>
+        `;
+
+        list.appendChild(div);
+      });
+    }
+
+    function addLink() {
+      const name = document.getElementById("fileName").value.trim();
+      const link = document.getElementById("fileLink").value.trim();
+
+      if (!name || !link) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      downloads.push({ name, link });
+
+      saveDownloads();
+      renderDownloads();
+
+      document.getElementById("fileName").value = "";
+      document.getElementById("fileLink").value = "";
+    }
+
+    function deleteLink(index) {
+      downloads.splice(index, 1);
+      saveDownloads();
+      renderDownloads();
+    }
+
+    renderDownloads();
+  </script>
+
+</body>
+</html>
